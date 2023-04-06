@@ -1,0 +1,43 @@
+{{>header}}
+
+<section class="container my-4">
+        <table class="table table-stripped">
+            <thead>
+                <th>Id</th>
+                <th>Title</th>
+                <th>Content</th>
+                <th>Date</th>
+                <th>Status</th>
+                <th>Action</th>
+            </thead>
+            <tbody id="userWrap">
+                {{#if hasData}}
+                {{#each allUsers}}
+                <tr>
+                    <td>{{id}}</td>
+                    <td>{{title}}</td>
+                    <td>{{content}}</td>
+                    <td>{{date}}</td>
+                    <td> {{status}} </td>
+                    <td>
+                        <a href="/single/{{id}}" class="mx-2 btn btn-primary">show</a>
+                        <a href="/editPost/{{id}}" class="mx-2 btn btn-warning">Edit</a>
+                        <a href="/deletSingle/{{id}}" class="mx-2 btn btn-danger">Delete</a>
+
+                        {{!-- {{#if allUsers}} --}}
+                            <a href="/activate/{{id}}" class="mx-2 btn btn-danger">Edit status</a>
+                        {{!-- {{/if}} --}}
+                        
+                    </td>
+                </tr>
+                {{/each}}
+                {{else}}
+                <td colspan="5" > Not user found</td>
+                {{/if}}
+                <a href="/deletAll" class="mx-2 btn btn-success">Delete All</a>
+            </tbody>
+        </table>
+    </section>
+
+
+{{>footer}}
