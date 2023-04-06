@@ -54,7 +54,8 @@ static editPostLogic = (req, res) => {
         const id = req.params.id
         // let status = req.params.status
         const index = allUsers.findIndex(u => u.id == id)
-        allUsers[index].status == "false" ? allUsers[index].status = "true" : allUsers[index].status = "false";
+        if(allUsers[index].status == "false")
+            allUsers[index].status = "true" 
     // })
         deal.writeDataJson("module/users.json", allUsers)
         res.redirect("/"
