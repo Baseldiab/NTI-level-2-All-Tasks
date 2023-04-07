@@ -97,5 +97,16 @@ static editPostLogic = (req, res) => {
             res.redirect("/")
     }
 // =============================================================
+static search = (req,res)=>{
+    const allUsers = deal.readJsonData(fileName)
+    const search = req.query.search
+    const user = allUsers.find(u => u.title == search  || u.content == search )
+    res.render("single", {
+        pageTitle: "Search Data",
+        user
+    })
+    
+}
+// =============================================================
 }
 module.exports = user

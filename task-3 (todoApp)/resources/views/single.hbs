@@ -1,9 +1,14 @@
 {{>header}}
-
-<h3>{{user.id}}</h3>
-<h3>{{user.name}}</h3>
-<h3>{{user.age}}</h3>
-<h3>{{user.email}}</h3>
-<h3> {{user.status}} </h3>
-
+{{>nav}}
+{{#if user}}
+    <h3>Id: {{user.id}}</h3>
+    <h3>Title: {{user.title}}</h3>
+    <h3>Content: {{user.content}}</h3>
+    <h3>Date: {{user.date}}</h3>
+    <h3>Status: {{user.status}} </h3>
+{{else}}
+    <div >
+        No Task found
+    </div>
+    {{/if}}
 {{>footer}}

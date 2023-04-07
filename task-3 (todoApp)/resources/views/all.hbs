@@ -1,6 +1,10 @@
 {{>header}}
 
 <section class="container my-4">
+    <form class="d-flex m-y-5 " role="search" method="get" action="/search/?{{search}}">
+        <input class="form-control me-2 justify-content-end" type="search" placeholder="Search" name="search">
+        <button class="btn btn-outline-success text-light bg-primary" type="submit">Search</button>
+    </form>
         <table class="table table-stripped">
             <thead>
                 <th>Id</th>
@@ -31,7 +35,6 @@
                 {{else}}
                 <td colspan="5" > Not user found</td>
                 {{/if}}
-                <a href="/deletAll" class="mx-2 btn btn-success">Delete All</a>
             </tbody>
         </table>
     </section>
