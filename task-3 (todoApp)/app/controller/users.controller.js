@@ -100,7 +100,9 @@ static editPostLogic = (req, res) => {
 static search = (req,res)=>{
     const allUsers = deal.readJsonData(fileName)
     const search = req.query.search
-    const user = allUsers.find(u => u.title == search  || u.content == search )
+    // const regex = new RegExp (search, 'gi')
+    // const user = allUsers.filter(u => u.title.match(regex)  || u.content.match(regex) )
+    const user = allUsers.find(u => u.title.includes(search)  || u.content.includes(search) )
     res.render("single", {
         pageTitle: "Search Data",
         user
