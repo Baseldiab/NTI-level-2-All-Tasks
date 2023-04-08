@@ -126,8 +126,8 @@ static delAll = async(req,res)=>{
                 const task = await db.collection("tasks").find(
                     {
                         $or: [
-                            { title: /search/ }
-                            , { content: /search/ }
+                            { title: { $in: [search] } }
+                            , { content: search }
                         ]
                     }
                 ).toArray()
@@ -135,7 +135,7 @@ static delAll = async(req,res)=>{
                     pageTitle: "Search Data",
                     task
                 })
-                // res.send(task)
+                // res.send("search")
             })
         }
         catch(e){
