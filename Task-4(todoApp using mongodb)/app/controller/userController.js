@@ -1,17 +1,14 @@
 const deal = require("../helper/dealWithJson")
 const connectDb = require("../../models/dbConnect")
+const ObjectId = require("mongodb").ObjectId
 const fileName = "models/users.json"
 
 class User{
-    static add = (req,res)=>{
-        res.render("add", {
-            pageTitle:"Add Data"
-        })
-    }
-    static addLogic = async(req,res)=>{
+
+    static addPostLogic = async(req,res)=>{
         try{
             connectDb(async(db)=>{
-                await db.collection("users").insertOne(req.query)
+                await db.collection("tasks").insertOne(req.body)
                 res.redirect("/")
             })
         }
@@ -19,78 +16,131 @@ class User{
             res.send(e)
         }
     }
-
     static addPost = (req,res)=>{
         res.render("addPost", {
             pageTitle:"Add Data"
         })
     }
     
-    static addPostLogic = async(req,res)=>{
-        try{
-            connectDb(async(db)=>{
-                await db.collection("users").insertOne(req.body)
-                res.redirect("/")
+// ====================================================
+static all =async(req,res)=>{
+    try{
+        connectDb(async(db)=>{
+            const allTasks = await db.collection("tasks").find().toArray()
+            res.render("all", {
+                pageTitle:"All Data", 
+                allTasks,
+                hasData: allTasks.length
             })
-        }
-        catch(e){
-            res.send(e)
-        }
+        })
     }
+    catch(e){
+        res.send(e)
+    }
+}
+// ====================================================
 
-    static all =async(req,res)=>{
-        try{
-            connectDb(async(db)=>{
-                const allUsers = await db.collection("users").find().toArray()
-                res.render("all", {
-                    pageTitle:"All Data", 
-                    allUsers,
-                    hasData: allUsers.length
+    static edit = async (req, res) => {
+        try {
+            connectDb(async (db) => {
+                const task = await db.collection("tasks").findOne({
+                    _id: new ObjectId(req.params.id)
+                })
+                res.render("edit", {
+                    pageTitle: "Edit Data",
+                    task
                 })
             })
         }
         catch(e){
             res.send(e)
         }
+}
+    static editLogic = async (req, res) => {
+        try {
+            connectDb(async (db) => {
+                const id = req.params.id
+                const task = await db.collection("tasks")
+                    .updateOne(
+                        { _id: new ObjectId(id) },
+                        { $set: {...req.query}}
+                    )
+                res.redirect(`/single/${id}`)
+                task
+            })
+        }
+        catch (e) {
+            res.send(e.message)
+        }
     }
-    
-    static edit = (req,res)=>{
-        const id = req.params.id
-        const allUsers=deal.readJsonData(fileName)
-        const user = allUsers.find(u=> u.id == id)
-        res.render("edit", {
-            pageTitle:"Edit Data Data",
-            user
+// ====================================================
+static single =  async(req,res)=>{
+    try{
+        connectDb(async(db)=>{
+            const task = await db.collection("tasks").findOne({
+                _id: new ObjectId(req.params.id)
+            })
+            res.render("single", {
+                pageTitle: "Single Data",
+                task
+            })
         })
     }
-    static editLogic = (req,res)=>{
-        const id = req.params.id
-        const allUsers=deal.readJsonData(fileName)
-        const index = allUsers.findIndex(u=> u.id == id)
-        allUsers[index] = {id, ...req.query}
-        deal.writeJsonData(fileName, allUsers)
-        res.redirect(`/single/${id}`)
+    catch(e){
+        res.send(e)
     }
-    static single =  (req,res)=>{
-        // res.send(req.params)
-        const id = req.params.id
-        const allUsers=deal.readJsonData(fileName)
-        const user = allUsers.find(u=> u.id == id)
-        res.render("single", {
-            pageTitle:"Single Data",
-            user
+}
+
+// ====================================================
+static del = async(req,res)=>{
+    try{
+        connectDb(async(db)=>{
+            await db.collection("tasks")
+                .deleteOne({
+                _id: new ObjectId(req.params.id)
+            })
+            res.redirect("/")
         })
     }
-    static del = (req,res)=>{
-        let allUsers=deal.readJsonData(fileName)
-        const id = req.params.id
-        allUsers = allUsers.filter(u=> u.id != id)
-        deal.writeJsonData(fileName, allUsers)
-        res.redirect("/")
+    catch(e){
+        res.send(e)
     }
-    static delAll = (req,res)=>{
-        deal.writeJsonData(fileName, [])
-        res.redirect("/")
+}
+// ====================================================
+static delAll = async(req,res)=>{
+        try{
+            connectDb(async(db)=>{
+                await db.collection("tasks")
+                    .remove()
+                res.redirect("/")
+            })
+        }
+        catch(e){
+            res.send(e)
+        }
+}
+    static search = async(req,res)=>{
+        try{
+            connectDb(async (db) => {
+                const search = req.query.search
+                const task = await db.collection("tasks").find(
+                    {
+                        $or: [
+                            { title: /search/ }
+                            , { content: /search/ }
+                        ]
+                    }
+                ).toArray()
+                res.render("single", {
+                    pageTitle: "Search Data",
+                    task
+                })
+                // res.send(task)
+            })
+        }
+        catch(e){
+            res.send(e)
+        }
     }
 }
 module.exports = User
