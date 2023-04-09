@@ -1,18 +1,18 @@
 const mongoose = require("mongoose")
 const validator = require("validator")
-const userModel = mongoose.model("user", {
-    name: {
+const userModel = mongoose.model("task", {
+    title: {
         type: String
     },
-    age: {
-        type: Number
+    content: {
+        type: String
     },
-    email: {
+    date: {
         type: String,
-        validate(value) {
-            if(!validator.isEmail(value))throw new Error("Invalid Email")
-        }
-
+    },
+    status: {
+        type: String,
+        default: false
     }
 })
 

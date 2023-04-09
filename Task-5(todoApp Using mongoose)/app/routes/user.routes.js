@@ -3,9 +3,6 @@ const router = require("express").Router()
 
 router.get("/", UserController.all)
 
-router.get("/add", UserController.add)
-router.get("/addLogic", UserController.addLogic)
-
 router.get("/addPost", UserController.addPost)
 router.post("/addPostLogic", UserController.addPostLogic)
 
@@ -15,7 +12,8 @@ router.get("/delAll", UserController.delAll)
 
 router.get("/del/:id", UserController.del)
 
-
+router.get("/activate/:id", UserController.activate)
+router.get("/search/", UserController.search)
 router.get("/edit/:id",UserController.edit)
 router.get("/editLogic/:id",UserController.editLogic)
 

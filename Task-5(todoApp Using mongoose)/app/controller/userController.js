@@ -5,22 +5,6 @@ const userModel = require("../../models/myModels/user.model")
 const { query } = require("express")
 
 class User {
-    static add = (req, res) => {
-        res.render("add", {
-            pageTitle: "Add Data"
-        })
-    }
-    static addLogic = async (req, res) => {
-        try {
-            const data = new userModel(req.query)
-            await data.save()
-            res.redirect("/")
-        }
-        catch (e) {
-            res.send(e)
-        }
-    }
-
     static addPost = (req, res) => {
         res.render("addPost", {
             pageTitle: "Add Data"
@@ -29,10 +13,9 @@ class User {
     
     static addPostLogic = async (req, res) => {
         try {
-            connectDb(async (db) => {
-                await db.collection("users").insertOne(req.body)
-                res.redirect("/")
-            })
+            const data = new userModel(req.body)
+            await data.save()
+            res.redirect("/")
         }
         catch (e) {
             res.send(e)
@@ -41,11 +24,11 @@ class User {
 
     static all = async (req, res) => {
         try {
-            const allUsers = await userModel.find()
+            const tasks = await userModel.find()
             res.render("all", {
                 pageTitle: "All Data",
-                allUsers,
-                hasData: allUsers.length
+                tasks,
+                hasData: tasks.length
             })
         }
         catch (e) {
@@ -55,10 +38,10 @@ class User {
     
     static edit = async (req, res) => {
         try {
-            const user = await userModel.findById(req.params.id)
+            const task = await userModel.findById(req.params.id)
             res.render("edit", {
                 pageTitle: "Edit Data",
-                user
+                task
             })
         }
         catch (e) {
@@ -67,10 +50,9 @@ class User {
     }
     static editLogic = async (req, res) => {
         try {
-            const user = await userModel.findByIdAndUpdate(req.params.id , req.query , {runValidators: true} )
-            
-            res.redirect(`/single/${req.params.id}`)
-            user
+            const id = req.params.id
+            await userModel.findByIdAndUpdate(id, req.query, { runValidators: true })
+            res.redirect(`/single/${id}`)
         }
         catch (e) {
             res.send(e.message)
@@ -78,10 +60,10 @@ class User {
     }
     static single = async (req, res) => {
         try {
-            const user = await userModel.findById(req.params.id)
+            const task = await userModel.findById(req.params.id)
             res.render("single", {
                 pageTitle: "single Data",
-                user
+                task
             })
         }
         catch (e) {
@@ -90,7 +72,7 @@ class User {
     }
     static del = async (req, res) => {
         try {
-            const user = await userModel.findByIdAndDelete(req.params.id)
+            await userModel.findByIdAndDelete(req.params.id)
             res.redirect("/")
         }
         catch (e) {
@@ -107,5 +89,41 @@ class User {
             res.send(e.message)
         }
     }
+    static activate = async (req, res) => {
+        try {
+            const id = req.params.id
+            const task = await userModel.findByIdAndUpdate(id,{ status: true }, { runValidators: true })
+            res.redirect("/")
+            task
+        }
+        catch (e) {
+            res.send(e)
+        }
+    }
+
+    static search = async(req,res)=>{
+        try{
+            const search = req.query.search
+            const regex = new RegExp(search)
+                const task = await userModel.find(
+                    {
+                        $or: [
+                            { title: {$regex: regex} }
+                            , { content: search }
+                        ]
+                    }
+                )
+                res.render("single", {
+                    pageTitle: "Search Data",
+                    task
+                })
+            
+        }
+        catch(e){
+            res.send(e)
+        }
+    }
 }
+
+
 module.exports = User
