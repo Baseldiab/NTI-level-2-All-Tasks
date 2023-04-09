@@ -12,6 +12,8 @@ router.get("/delAll", UserController.delAll)
 
 router.get("/del/:id", UserController.del)
 
+router.get("/activate/:id", UserController.activate)
+
 router.get("/search/", UserController.search);    
 
 router.get("/edit/:id",UserController.edit)

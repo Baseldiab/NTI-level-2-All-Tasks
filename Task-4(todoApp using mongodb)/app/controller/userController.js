@@ -107,18 +107,35 @@ static del = async(req,res)=>{
     }
 }
 // ====================================================
+static activate = (req, res) => {
+    try {
+        connectDb(async(db) => {
+        const task = await db.collection("tasks")
+            .updateOne(
+                { _id: new ObjectId(req.params.id) },
+                { $set: { status: true } }
+            );
+            res.redirect("/")
+            task
+    });
+    } catch(e){
+        res.send(e)
+    }
+    };
+// ====================================================
 static delAll = async(req,res)=>{
-        try{
-            connectDb(async(db)=>{
-                await db.collection("tasks")
-                    .remove()
-                res.redirect("/")
-            })
-        }
-        catch(e){
-            res.send(e)
-        }
+    try{
+        connectDb(async(db)=>{
+            await db.collection("tasks")
+            .remove()
+            res.redirect("/")
+        })
+    }
+    catch(e){
+        res.send(e)
+    }
 }
+// ====================================================
     static search = async(req,res)=>{
         try{
             connectDb(async (db) => {
