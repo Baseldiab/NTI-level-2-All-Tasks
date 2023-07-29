@@ -70,12 +70,12 @@ postArr = [
   }
 ]
   searchValue: any;
+
 handleSearch() {
   const result = this.postArr.filter((post) => {
     return (post.title).includes(this.searchValue);
   });
   this.postArr = result
-
 }
 
 }

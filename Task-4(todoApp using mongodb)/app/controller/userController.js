@@ -121,7 +121,7 @@ static activate = (req, res) => {
     } catch(e){
         res.send(e)
     }
-    };
+    }
 // ====================================================
 static delAll = async(req,res)=>{
     try{
@@ -137,22 +137,27 @@ static delAll = async(req,res)=>{
 }
 // ====================================================
     static search = async(req,res)=>{
-        try{
+        try {
             connectDb(async (db) => {
                 const search = req.query.search
-                const task = await db.collection("tasks").find(
+                let results = [];
+                await db.collection("tasks").find(
                     {
                         $or: [
-                            { title: { $in: [search] } }
-                            , { content: search }
+                            { title: { $regex: search } }
+                            , { content: { $regex: search } }
                         ]
                     }
-                ).toArray()
-                res.render("single", {
-                    pageTitle: "Search Data",
-                    task
+                ).toArray(function (err, result) {
+                    result.forEach(element => {
+                        results.push(element);
+                    });
+                    res.render("single", {
+                        pageTitle: "Search Data",
+                        results
+                    })
+                    // res.send("search")
                 })
-                // res.send("search")
             })
         }
         catch(e){
